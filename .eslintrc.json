@@ -1,0 +1,7 @@
+{
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",  // Turn off the rule that disallows `any`
+    "@typescript-eslint/explicit-module-boundary-types": "off"  // Optional: Disable rule requiring explicit return types for functions
+  }
+}

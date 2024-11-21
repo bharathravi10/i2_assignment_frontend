@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",                           // Keeps your target JavaScript version
+    "lib": ["dom", "dom.iterable", "esnext"],     // Defines the libraries to be included
+    "allowJs": true,                              // Allows JavaScript files to be imported
+    "skipLibCheck": true,                         // Skips type checking of declaration files for faster builds
+    "strict": true,                               // Keeps strict mode enabled for better type safety
+    "noEmit": true,                               // Prevents emitting of JS files (useful for Next.js)
+    "esModuleInterop": true,                      // Enables compatibility with ES module imports
+    "module": "esnext",                           // Keeps module system as ES modules
+    "moduleResolution": "node",                   // Use node resolution strategy (if you encounter issues with bundlers)
+    "resolveJsonModule": true,                    // Allows importing JSON files as modules
+    "isolatedModules": true,                      // Ensures each file is treated as an isolated module
+    "jsx": "preserve",                            // Keep JSX as-is for Next.js (uses React's JSX transformation)
+    "incremental": true,                          // Enables incremental compilation for faster builds
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]  // Path alias for cleaner imports
+    },
+    "noImplicitAny": false,                       // Allows `any` type implicitly, which helps when you need flexibility
+    "strictNullChecks": false,                    // Relax strict null checks if necessary (optional)
+    "noUnusedLocals": false,                      // Disables unused variable check (optional)
+    "noUnusedParameters": false                    // Disables unused parameter check (optional)
+  },
+  "include": [
+    "next-env.d.ts", 
+    "**/*.ts", 
+    "**/*.tsx", 
+    ".next/types/**/*.ts", 
+    "main-layout/MainLayout"  // Make sure this path is correct for your layout
+  ],
+  "exclude": [
+    "node_modules"  // Exclude dependencies
+  ]
+}
