@@ -65,13 +65,14 @@ const SignUpForm = () => {
           );
           router.push("/sign-in");
         }
-      } catch (error: any) {
+      } catch (error) {
         dispatch(
           showSnackbar({
             message: AddNotesConstants.FAILURE_MSG,
             severity: "error",
           })
         );
+        Promise.reject(error)
       }
     },
   });

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import ClientThemeProvider from "./ClientThemeProvider";
 import DrawerAppBar from "@/components/main-layout";
 import ClientProvider from "./ClientProvider";
+import JWTProvider from "@/context/JwtContext";
 
 // No need to mark this entire file with `"use client"` for SSR
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body>
         <ClientProvider>
           <ClientThemeProvider>
+            <JWTProvider />
             <DrawerAppBar>{children}</DrawerAppBar>
           </ClientThemeProvider>
         </ClientProvider>

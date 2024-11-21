@@ -5,9 +5,14 @@ import * as Yup from "yup";
 import CustomizedInput from "../common/input-field";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
-import { SigninConstants } from "./signIn-const";
+import { userSignIn } from "@/utils/api";
+import { useDispatch } from "react-redux";
+import { userLoginSuccess } from "@/store/slice/auth";
+import { setSession } from "@/context/JwtContext";
+import { showSnackbar } from "@/store/snackbarSlice";
 
 const SignInform = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -25,9 +30,27 @@ const SignInform = () => {
   const formik = useFormik({
     initialValues,
     validationSchema,
+
     onSubmit: async (values) => {
-      // Handle form submission logic here
-      console.log("Form submitted with values:", values);
+      try {
+        const res = await userSignIn(values.email, values.password);
+
+        if (res.success) {
+          dispatch(userLoginSuccess(res.payload));
+          setSession(res.access_token || null);
+        } else {
+         dispatch( showSnackbar({
+          message: "credentials are invalid",
+          severity: "error",
+        }))
+        }
+      } catch (error) {
+        dispatch(showSnackbar({
+          message: "credentials are invalid",
+          severity: "error",
+        }));
+        Promise.reject(error)
+      }
     },
   });
   return (
@@ -35,7 +58,7 @@ const SignInform = () => {
       <Box
         sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
       >
-        <Typography>{SigninConstants.TITLE}</Typography>
+        <Typography>Login</Typography>
       </Box>
       <Box component="form" onSubmit={formik.handleSubmit}>
         <CustomizedInput
@@ -52,7 +75,7 @@ const SignInform = () => {
           label="Password"
           htmlFor="password"
           id="password"
-          type="text"
+          type="password"
           value={formik.values.password}
           onChange={formik.handleChange}
           error={formik.touched.password && Boolean(formik.errors.password)}
@@ -73,7 +96,7 @@ const SignInform = () => {
                 color: "#192b69",
               }}
             >
-              {SigninConstants.TITLE}
+              Login
             </Button>
           </Grid>
           <Grid item xs={6}>
@@ -86,7 +109,7 @@ const SignInform = () => {
               }}
               onClick={() => router.push("/sign-up")}
             >
-              {SigninConstants.REGISTER}
+              Register
             </Button>
           </Grid>
         </Grid>

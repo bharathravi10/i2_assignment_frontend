@@ -14,15 +14,17 @@ const CustomizedCard: React.FC<ICustomizedCardProps> = ({
   minWidth,
 }) => {
   return (
-    <Card sx={{ minWidth: minWidth, width: "100%", border: "1px solid brown" }}>
+    <Card sx={{ minWidth: {sm:'100%',md:minWidth}, width: {xs:'100%',sm:minWidth}, border: "1px solid brown",margin:{md:'auto'} }}>
       <Box
         sx={{
           padding: "10px",
           backGround: "#fcd0b4",
           display: "flex",
+          fontWeight: 600,
           justifyContent: "space-between",
           alignItems: "center",
           borderBottom: "1px solid brown",
+          textTransform: "capitalize",
         }}
       >
         <Typography>{heading}</Typography>

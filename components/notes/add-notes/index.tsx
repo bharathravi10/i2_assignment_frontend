@@ -6,12 +6,14 @@ import { Box, Button, TextareaAutosize } from "@mui/material";
 import CustomizedInput from "@/components/common/input-field";
 import { postNotes } from "@/utils/api";
 import { showSnackbar } from "@/store/snackbarSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleModal } from "@/store/modelSlice";
 import { AddNotesConstants } from "../notes-constants";
+import { setNotes } from "@/store/notesSlice";
 
 const AddNotes = () => {
   const dispatch = useDispatch();
+  const notes = useSelector((state:any) => state.getNotes.notes)
   const validationSchema = Yup.object({
     title: Yup.string().required(AddNotesConstants.TITLE_ERROR_MSG),
     notes: Yup.string().required(AddNotesConstants.NOTES_ERROR_MSG),
@@ -30,7 +32,6 @@ const AddNotes = () => {
         const response = await postNotes(
           values.title,
           values.notes,
-          "673db7781a903a2e328e9753"
         );
         if (response?.status === 201) {
           dispatch(
@@ -39,6 +40,7 @@ const AddNotes = () => {
               severity: "success",
             })
           );
+          dispatch(setNotes([...notes, response.data]));
           dispatch(toggleModal());
         }
       } catch (error) {
@@ -48,6 +50,7 @@ const AddNotes = () => {
             severity: "error",
           })
         );
+        Promise.reject(error)
       }
     },
   });

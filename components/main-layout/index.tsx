@@ -17,9 +17,11 @@ import Button from "@mui/material/Button";
 import { usePathname, useRouter } from "next/navigation";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import { Tooltip } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleModal } from "@/store/modelSlice";
 import { MainLayoutConstant } from "./layout-const";
+import { setSession } from "@/context/JwtContext";
+import { userLogoutSuccess } from "@/store/slice/auth";
 
 interface Props {
   window?: () => Window;
@@ -27,18 +29,30 @@ interface Props {
 }
 
 const drawerWidth = 240;
-const navItems = [
-  {
-    name: "Notes",
-    redirect: "keep-notes",
-  },
-  {
-    name: "Login",
-    redirect: "sign-in",
-  },
-];
 
 export default function DrawerAppBar(props: Props) {
+  const {isAuthenticated} = useSelector((state:any) => state.auth)
+  const navItems = [
+    {
+      name: "Notes",
+      redirect: "keep-notes",
+      isActive: true
+    },
+    {
+      name: "Login",
+      redirect: "sign-in",
+      isActive: !isAuthenticated
+    },
+    {
+      name: "Logout",
+      redirect: "sign-in",
+      isActive: isAuthenticated,
+      onClick: () => {
+        setSession(null)
+        dispatch(userLogoutSuccess())
+      }
+    },
+  ];
   const router = useRouter();
   const dispatch = useDispatch();
   const { window, children } = props;
@@ -58,14 +72,21 @@ export default function DrawerAppBar(props: Props) {
       <Divider />
       <List>
         {navItems.map((item, index) => (
-          <ListItem key={index} disablePadding>
+          <React.Fragment key={index}>
+          {
+            item.isActive && <><ListItem key={index} disablePadding>
             <ListItemButton
               sx={{ textAlign: "center" }}
-              onClick={() => router.push(`/${item.redirect}`)}
+              onClick={() => {
+                item.onClick?.()
+                router.push(`/${item.redirect}`)
+              }}
             >
               <ListItemText primary={item.name} />
             </ListItemButton>
-          </ListItem>
+          </ListItem></>
+          }
+          </React.Fragment>
         ))}
       </List>
     </Box>
@@ -106,13 +127,21 @@ export default function DrawerAppBar(props: Props) {
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item, index) => (
-              <Button
-                key={index}
-                sx={{ color: "#fff" }}
-                onClick={() => router.push(`/${item.redirect}`)}
-              >
-                {item.name}
-              </Button>
+              <React.Fragment key={index}>
+                {
+                  item.isActive && (
+                    <Button
+                      color="primary"
+                      onClick={() => {
+                        item.onClick?.()
+                        router.push(`/${item.redirect}`)
+                      }}
+                    >
+                      {item.name}
+                    </Button>
+                  )
+                }
+              </React.Fragment>
             ))}
           </Box>
         </Toolbar>
@@ -137,7 +166,7 @@ export default function DrawerAppBar(props: Props) {
           {drawer}
         </Drawer>
       </nav>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box component="main" sx={{ p: 3,width:"100%" }}>
         <Toolbar />
         {children}
       </Box>

@@ -31,7 +31,15 @@ const CardContent: React.FC<ICardContentProps> = ({ note }) => {
         flexDirection: "column",
       }}
     >
-      <Typography>{note.note_content}</Typography>
+      <Box
+        sx={{
+          maxHeight: "180px", 
+          overflowY: "auto",   
+          marginBottom: "10px", 
+        }}
+      >
+        <Typography>{note.note_content}</Typography>
+      </Box>
       <Box
         sx={{
           display: "flex",

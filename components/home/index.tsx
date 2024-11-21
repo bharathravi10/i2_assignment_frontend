@@ -7,7 +7,7 @@ const Homepage = () => {
 
   useEffect(() => {
     // Redirect to the sign-in page immediately on page load
-    router.push("/sign-in");
+    router.push("/keep-notes");
   }, [router]);
 
   return null;

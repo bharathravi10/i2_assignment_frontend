@@ -4,10 +4,11 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { Box, Button, TextareaAutosize } from "@mui/material";
 import { ICardContentProps } from "../notes-details/CardContent";
-import { deleteNotes, updateNotes } from "@/utils/api";
+import { deleteNotes, getAllNotesData, updateNotes } from "@/utils/api";
 import { useDispatch } from "react-redux";
 import { showSnackbar } from "@/store/snackbarSlice";
 import { AddNotesConstants, UpdateNotesConstants } from "../notes-constants";
+import { setNotes } from "@/store/notesSlice";
 
 const UpdateNotes: React.FC<ICardContentProps> = ({ note, toggleUpdate }) => {
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const UpdateNotes: React.FC<ICardContentProps> = ({ note, toggleUpdate }) => {
     onSubmit: async (values) => {
       // Handle form submission logic here
       try {
-        const response = await updateNotes(values.userId, values.noteId, {
+        const response = await updateNotes( values.noteId, {
           note_title: values.title,
           note_content: values.notes,
         });
@@ -39,7 +40,13 @@ const UpdateNotes: React.FC<ICardContentProps> = ({ note, toggleUpdate }) => {
               severity: "success",
             })
           );
-          toggleUpdate && toggleUpdate();
+          const res  = await getAllNotesData()
+      if(res) {
+        dispatch(setNotes(res));
+      }
+          if (toggleUpdate) {
+            toggleUpdate();
+          }
         }
       } catch (error) {
         dispatch(
@@ -48,12 +55,13 @@ const UpdateNotes: React.FC<ICardContentProps> = ({ note, toggleUpdate }) => {
             severity: "error",
           })
         );
+        Promise.reject(error);
       }
     },
   });
   const deleteNote = async () => {
     try {
-      const res = await deleteNotes(formik.values.userId, formik.values.noteId);
+      const res = await deleteNotes(formik.values.noteId);
 
       if (res?.status === 200) {
         dispatch(
@@ -61,8 +69,16 @@ const UpdateNotes: React.FC<ICardContentProps> = ({ note, toggleUpdate }) => {
             message: UpdateNotesConstants.DELETE_SUCCESS_MSG,
             severity: "success",
           })
+          
         );
-        toggleUpdate && toggleUpdate();
+
+        const res  = await getAllNotesData()
+        if(res) {
+          dispatch(setNotes(res));
+        }
+        if (toggleUpdate) {
+          toggleUpdate();
+        }
       }
     } catch (error) {
       dispatch(
@@ -71,6 +87,7 @@ const UpdateNotes: React.FC<ICardContentProps> = ({ note, toggleUpdate }) => {
           severity: "error",
         })
       );
+      Promise.reject(error);
     }
   };
   useEffect(() => {
